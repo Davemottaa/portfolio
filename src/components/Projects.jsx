@@ -3,17 +3,17 @@ const Projects = () => {
     {
       title: "Web3 Wallet",
       description: "I’m creating a decentralized wallet that gives users full control over their cryptocurrencies. The platform allows users to securely store, send, and receive digital assets with blockchain integration, maintaining privacy and security. It’s a simple, safe, and autonomous wallet for those who want full control over their funds.",
-      image: "/images/wallet.jpg"
+      image: `${import.meta.env.BASE_URL}images/wallet.jpg`
     },
     {
       title: "Social Media Web3",
       description: "I am building a decentralized social network that gives users full control over their data and content. Using blockchain to transparently record interactions and IPFS to securely store posts, the platform enables wallet-based login, direct rewards through tokens, and community-driven governance via a DAO. The focus is on ensuring privacy, transparency, and autonomy for all users",
-      image: "/images/social.png"
+      image: `${import.meta.env.BASE_URL}images/social.png`
     },
     {
       title: "Web3 Game",
       description: "I’m developing a Play-to-Earn game where players earn tokens through gameplay. By utilizing blockchain, I track in-game achievements and rewards, allowing players to trade, upgrade, and monetize their digital assets. It’s a fun, decentralized, and rewarding gaming experience.",
-      image: "/images/game.jpeg"
+      image: `${import.meta.env.BASE_URL}images/game.jpeg`
     }
   ]
 

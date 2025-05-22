@@ -1,60 +1,74 @@
 import { useState } from 'react'
+import { ethers } from 'ethers'
+import { DaviTokenABI } from '../DaviTokenABI'
+
+const CONTRACT_ADDRESS = '0xFD5952AC5f085eB93E3F1F723F063e13F34D7758'
 
 const Faucet = () => {
   const [status, setStatus] = useState('')
-  const [address, setAddress] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [timeLeft, setTimeLeft] = useState(null)
 
-  // Substitua pelo endereço do seu contrato faucet e ABI
-  const FAUCET_ADDRESS = '0xSEU_CONTRATO_FAUCET'
-  // const FAUCET_ABI = [ ... ]
-
-  const handleRequest = async (e) => {
-    e.preventDefault()
+  const requestTokens = async () => {
     if (!window.ethereum) {
       setStatus('Instale o MetaMask!')
       return
     }
-    if (!address) {
-      setStatus('Informe seu endereço de carteira.')
-      return
-    }
+    setLoading(true)
+    setStatus('')
     try {
-      setStatus('Solicitando tokens...')
-      // Aqui você faria a chamada real ao contrato faucet usando ethers.js ou web3.js
-      // Exemplo fictício:
-      // const provider = new ethers.providers.Web3Provider(window.ethereum)
-      // const signer = provider.getSigner()
-      // const faucet = new ethers.Contract(FAUCET_ADDRESS, FAUCET_ABI, signer)
-      // await faucet.requestTokens(address)
-      setTimeout(() => setStatus('Tokens enviados para sua carteira!'), 1500)
+      const provider = new ethers.BrowserProvider(window.ethereum)
+      const signer = await provider.getSigner()
+      const contract = new ethers.Contract(CONTRACT_ADDRESS, DaviTokenABI, signer)
+
+      // Checa tempo restante
+      const userAddress = await signer.getAddress()
+      const time = await contract.timeUntilNextRequest(userAddress)
+      if (time > 0) {
+        setTimeLeft(Number(time))
+        setStatus('Você já solicitou. Aguarde o tempo acabar.')
+        setLoading(false)
+        return
+      }
+
+      // Solicita tokens
+      const tx = await contract.requestTokens()
+      setStatus('Transação enviada. Aguarde confirmação...')
+      await tx.wait()
+      setStatus('Tokens enviados para sua carteira!')
+      setTimeLeft(24 * 60 * 60) // 24h em segundos
     } catch (err) {
-      setStatus('Erro ao solicitar tokens.')
+      setStatus('Erro ao solicitar tokens: ' + (err?.reason || err?.message || err))
     }
+    setLoading(false)
+  }
+
+  // Exibe tempo restante em formato legível
+  const formatTime = (seconds) => {
+    if (seconds <= 0) return 'Pronto para solicitar!'
+    const h = Math.floor(seconds / 3600)
+    const m = Math.floor((seconds % 3600) / 60)
+    const s = seconds % 60
+    return `${h}h ${m}m ${s}s`
   }
 
   return (
     <section id="faucet">
       <div className="container text-center">
-        <h2 className="gradient-text">Solicite seu Faucet</h2>
-        <form onSubmit={handleRequest} style={{ margin: '2rem 0' }}>
-          <input
-            type="text"
-            placeholder="Seu endereço de carteira"
-            value={address}
-            onChange={e => setAddress(e.target.value)}
-            style={{
-              padding: '0.7rem 1rem',
-              borderRadius: '8px',
-              border: '1px solid #ccc',
-              marginRight: '1rem',
-              width: '320px',
-              maxWidth: '90%',
-            }}
-          />
-          <button type="submit" className="social-link" style={{padding: '0.7rem 1.5rem'}}>
-            Solicitar Faucet
-          </button>
-        </form>
+        <h2 className="gradient-text">Take your tokens</h2>
+        <button
+          className="social-link"
+          style={{ padding: '0.7rem 1.5rem', marginBottom: '1rem' }}
+          onClick={requestTokens}
+          disabled={loading || (timeLeft && timeLeft > 0)}
+        >
+          {loading ? 'Enviando...' : 'Solicitar Faucet'}
+        </button>
+        {timeLeft !== null && timeLeft > 0 && (
+          <p style={{ color: 'orange' }}>
+            Aguarde: {formatTime(timeLeft)}
+          </p>
+        )}
         {status && <p>{status}</p>}
       </div>
     </section>
