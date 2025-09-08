@@ -21,22 +21,31 @@ const NeonParticlesBackground = () => {
     renderer.setSize(window.innerWidth, window.innerHeight);
     mountRef.current.appendChild(renderer.domElement);
 
-    // Neon particles
-    const particles = 80; // menos partículas
+    // Estrelas estáticas e pequenas
+    const particles = 2500; // muito mais partículas
     const geometry = new THREE.BufferGeometry();
     const positions = [];
     const colors = [];
+    const sizes = [];
     const color = new THREE.Color();
 
     for (let i = 0; i < particles; i++) {
       positions.push(
-        (Math.random() - 0.5) * 400,
-        (Math.random() - 0.5) * 200,
-        (Math.random() - 0.5) * 200
+        (Math.random() - 0.5) * 600,
+        (Math.random() - 0.5) * 300,
+        (Math.random() - 0.5) * 300
       );
-      // Neon color (random between blue, pink, green)
-      color.setHSL(Math.random(), 1, 0.6);
+      // Cores de estrelas: branco, azul claro, amarelo claro
+      const rand = Math.random();
+      if (rand < 0.75) {
+        color.setRGB(1, 1, 1); // maioria branca
+      } else if (rand < 0.90) {
+        color.setRGB(0.8, 0.9, 1); // azul claro
+      } else {
+        color.setRGB(1, 1, 0.8); // amarelo claro
+      }
       colors.push(color.r, color.g, color.b);
+      sizes.push(Math.random() * 1.2 + 0.3); // tamanhos entre 0.3 e 1.5
     }
 
     geometry.setAttribute(
@@ -48,43 +57,18 @@ const NeonParticlesBackground = () => {
       new THREE.Float32BufferAttribute(colors, 3)
     );
 
+    // Custom shader para variar tamanho das estrelas
     const material = new THREE.PointsMaterial({
-      size: 10, // maior para destacar as bolas
+      size: 1,
       vertexColors: true,
       transparent: true,
-      opacity: 0.8,
+      opacity: 1,
       blending: THREE.AdditiveBlending,
-      // shape padrão já é círculo
+      sizeAttenuation: true,
     });
 
     const points = new THREE.Points(geometry, material);
     scene.add(points);
-
-    // Mouse interaction
-    let mouseX = 0,
-      mouseY = 0;
-    let targetX = 0,
-      targetY = 0;
-
-    const onMouseMove = (event) => {
-      mouseX = (event.clientX / window.innerWidth) * 2 - 1;
-      mouseY = -(event.clientY / window.innerHeight) * 2 + 1;
-    };
-    window.addEventListener("mousemove", onMouseMove);
-
-    // Animation
-    let frameId;
-    const animate = () => {
-      // Suave: aproxima rotação do target
-      targetX += (mouseX - targetX) * 0.05;
-      targetY += (mouseY - targetY) * 0.05;
-      points.rotation.y = targetX * 0.7;
-      points.rotation.x = targetY * 0.7;
-
-      renderer.render(scene, camera);
-      frameId = requestAnimationFrame(animate);
-    };
-    animate();
 
     // Responsividade
     const handleResize = () => {
@@ -94,11 +78,12 @@ const NeonParticlesBackground = () => {
     };
     window.addEventListener("resize", handleResize);
 
+    // Render estático
+    renderer.render(scene, camera);
+
     // Cleanup
     return () => {
-      cancelAnimationFrame(frameId);
       window.removeEventListener("resize", handleResize);
-      window.removeEventListener("mousemove", onMouseMove);
       if (mountRef.current && renderer.domElement.parentNode === mountRef.current) {
         mountRef.current.removeChild(renderer.domElement);
       }
