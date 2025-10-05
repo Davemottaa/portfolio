@@ -11,7 +11,7 @@ const Faucet = () => {
 
   const requestTokens = async () => {
     if (!window.ethereum) {
-      setStatus('Instale o MetaMask!')
+      alert('Instale o MetaMask!')
       return
     }
     setLoading(true)
