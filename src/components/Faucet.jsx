@@ -58,18 +58,18 @@ const Faucet = () => {
         <h2 className="gradient-text">Take your tokens</h2>
         <button
           className="social-link"
-          style={{ padding: '0.7rem 1.5rem', marginBottom: '1rem' }}
+          style={{ padding: '0.7rem 1.5rem', marginBottom: '1rem', minWidth: '180px', fontSize: '1rem' }}
           onClick={requestTokens}
           disabled={loading || (timeLeft && timeLeft > 0)}
         >
           {loading ? 'Enviando...' : 'Solicitar Faucet'}
         </button>
         {timeLeft !== null && timeLeft > 0 && (
-          <p style={{ color: 'orange' }}>
+          <p style={{ color: 'orange', fontSize: '1rem' }}>
             Aguarde: {formatTime(timeLeft)}
           </p>
         )}
-        {status && <p>{status}</p>}
+        {status && <p style={{ fontSize: '1rem' }}>{status}</p>}
       </div>
     </section>
   )

@@ -30,7 +30,7 @@ const Skills = () => {
         <h2 className="text-3xl font-bold mb-12 text-center gradient-text">
           Skills & Technologies
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
+        <div className="skills-container">
           {skills.map((skill, index) => (
             <div className="skill-card" key={index}>
               <i className={`${skill.icon} text-4xl mb-4 animate-bounce`}></i>

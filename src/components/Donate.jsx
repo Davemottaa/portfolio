@@ -25,8 +25,8 @@ const Donate = () => {
     <section id="donate">
       <div className="container text-center">
         <h2 className="gradient-text">Support My Work 💙</h2>
-        <div className="donate-buttons">
-          <button onClick={donateWithMetaMask}>
+        <div className="donate-buttons" style={{ flexWrap: 'wrap', gap: '1rem', justifyContent: 'center' }}>
+          <button onClick={donateWithMetaMask} style={{ minWidth: '180px', fontSize: '1rem' }}>
             <i className="fab fa-ethereum"></i> Donate with MetaMask
           </button>
           {/* Outros botões de doação */}
