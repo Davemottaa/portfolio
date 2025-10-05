@@ -7,7 +7,6 @@ import Projects from './components/Projects'
 import Donate from './components/Donate'
 import './assets/styles/main.css'
 import Faucet from './components/Faucet'
-import NeonParticlesBackground from './components/NeonParticlesBackground'
 
 function App() {
   const [darkMode, setDarkMode] = useState(
@@ -17,7 +16,6 @@ function App() {
   return (
     <div className={darkMode ? 'dark-mode' : ''}>
       <Navbar darkMode={darkMode} setDarkMode={setDarkMode} />
-      <NeonParticlesBackground />
       <main>
         <Hero />
         <About />
